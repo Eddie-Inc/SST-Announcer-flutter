@@ -44,8 +44,7 @@ class _FeedPageState extends State<FeedPage> {
   }
 
   Future<void> _fetchPosts() async {
-    final url =
-        'http://studentsblog.sst.edu.sg/feeds/posts/default?max-results=$_numPosts';
+    String url = 'http://studentsblog.sst.edu.sg/feeds/posts/default';
     final file = await DefaultCacheManager().getSingleFile(url);
 
     if (await file.exists()) {
@@ -107,9 +106,8 @@ class _FeedPageState extends State<FeedPage> {
             : RefreshIndicator(
                 onRefresh: _refresh,
                 child: ListView.separated(
-                  separatorBuilder: (separatorContext, index) => const SizedBox(
-                    height: 5,
-                  ),
+                  separatorBuilder: (separatorContext, index) =>
+                      const Divider(),
                   controller: _controller,
                   itemCount: _posts.length,
                   itemBuilder: (context, index) {
@@ -148,66 +146,73 @@ class _FeedPageState extends State<FeedPage> {
                           await prefs.setStringList("authors", pinnedAuthors!);
                           _refresh();
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                          child: ListTile(
-                            onTap: () {
-                              final navigator = Navigator.of(context);
-                              navigator.push(
-                                CupertinoPageRoute(
-                                  builder: (context) {
-                                    return AnnouncementPage(
-                                      author: pinnedAuthors![index],
-                                      title: pinnedTitles![index],
-                                      bodyText: pinnedContent![index],
+                        child: pinnedTitles![index] != ""
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                child: ListTile(
+                                  onTap: () {
+                                    final navigator = Navigator.of(context);
+                                    navigator.push(
+                                      CupertinoPageRoute(
+                                        builder: (context) {
+                                          return AnnouncementPage(
+                                            author: pinnedAuthors![index],
+                                            title: pinnedTitles![index],
+                                            bodyText: pinnedContent![index],
+                                          );
+                                        },
+                                      ),
                                     );
                                   },
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Pinned",
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      Text(
+                                        pinnedTitles![index],
+                                        maxLines: 3,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        pinnedAuthors![index],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: Column(
+                                    children: [
+                                      Text(
+                                        parseFragment(pinnedContent![index])
+                                            .text!,
+                                        maxLines: 3,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      index == (pinnedTitles!.length - 1)
+                                          ? const Divider(
+                                              thickness: 3,
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.push_pin,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                              );
-                            },
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Pinned",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  pinnedTitles![index],
-                                  maxLines: 3,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Text(
-                                  pinnedAuthors![index],
-                                  style: const TextStyle(fontWeight: FontWeight.w300),
-                                ),
-                              ],
-                            ),
-                            subtitle: Column(
-                              children: [
-                                Text(
-                                  parseFragment(pinnedContent![index]).text!,
-                                  maxLines: 3,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                index == (pinnedTitles!.length - 1)
-                                    ? const Divider(
-                                        thickness: 3,
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                            trailing: const Icon(
-                              Icons.push_pin,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
+                              )
+                            : SizedBox(
+                                height: 10,
+                              ),
                       );
                     } else {
                       final post = _posts[index - pinnedTitles!.length];
@@ -285,7 +290,8 @@ class _FeedPageState extends State<FeedPage> {
                               ),
                               Text(
                                 author,
-                                style: const TextStyle(fontWeight: FontWeight.w300),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w300),
                               ),
                             ],
                           ),
