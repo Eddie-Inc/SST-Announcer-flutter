@@ -67,8 +67,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
             caseSensitive: false), (match) {
       return '"${match.group(0)}"';
     });
-    final formattedDate =
-        dueDate == null ? "" : DateFormat("dd/MM/yyyy").format(dueDate);
+    final formattedDate = dueDate == DateFormat("dd/MM/yyyy").format(dueDate!);
 
     return Scaffold(
       appBar: AppBar(
@@ -106,7 +105,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                       Icons.event_available_outlined),
                                 )
                               : ActionChip(
-                                  label: Text(formattedDate),
+                                  label: Text(formattedDate as String),
                                   onPressed: pickDate,
                                   backgroundColor: theme.brightness ==
                                           Brightness.dark
