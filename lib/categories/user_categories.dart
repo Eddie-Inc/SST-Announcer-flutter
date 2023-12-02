@@ -210,7 +210,7 @@ class _FeedPageState extends State<FeedPage> {
                                   ),
                                 ),
                               )
-                            : SizedBox(
+                            : const SizedBox(
                                 height: 10,
                               ),
                       );

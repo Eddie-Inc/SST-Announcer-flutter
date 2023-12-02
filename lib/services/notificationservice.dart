@@ -20,8 +20,7 @@ class NotificationService {
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     tz.initializeTimeZones();
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   NotificationDetails getPlatformChannelSpecifics() {

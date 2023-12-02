@@ -3,11 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sst_announcer/bottomnavigation.dart';
 import 'package:sst_announcer/services/poststream.dart';
 import 'package:sst_announcer/search.dart';
 import 'package:sst_announcer/settings.dart';
 import 'package:sst_announcer/categories/categories_list.dart';
-import 'package:sst_announcer/categories/user_categories.dart';
 import 'categories/categoriespage.dart';
 import 'services/notificationservice.dart';
 import 'package:http/http.dart' as http;
@@ -350,7 +350,7 @@ class _HomePageState extends State<HomePage> {
                                   addCustomCat = true;
                                 });
                               },
-                              child: Center(
+                              child: const Center(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -421,7 +421,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Ink(
-        child: Center(
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -429,7 +429,7 @@ class _HomePageState extends State<HomePage> {
                 height: 10,
               ),
               Expanded(
-                child: FeedPage(),
+                child: NavigationExample(),
               ),
             ],
           ),

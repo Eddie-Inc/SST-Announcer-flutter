@@ -130,8 +130,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               onPressed: () {
                                 final navigator = Navigator.of(context);
                                 navigator.pop();
-                                if (titleController.text == "" ||
-                                    dueDate == null) {
+                                if (titleController.text == "") {
                                   return;
                                 } else {
                                   service.scheduleNotification(
@@ -153,7 +152,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
               },
               icon: const Icon(Icons.calendar_month))
         ],
-        title: Row(
+        title: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text("Announcement"),
