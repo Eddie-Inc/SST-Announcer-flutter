@@ -85,7 +85,6 @@ class _FeedPageState extends State<FeedPage> {
   Widget build(BuildContext context) {
     getSavedValues();
 
-    final navigator = Navigator.of(context);
     _controller.addListener(() {
       if (_controller.position.atEdge) {
         bool isTop = _controller.position.pixels == 0;
@@ -111,15 +110,6 @@ class _FeedPageState extends State<FeedPage> {
                   controller: _controller,
                   itemCount: _posts.length,
                   itemBuilder: (context, index) {
-                    final post = _posts[index];
-                    final title = post.findElements('title').first.text;
-                    final content = post.findElements('content').first.text;
-                    final author = post
-                        .findElements('author')
-                        .first
-                        .findElements("name")
-                        .first
-                        .text;
                     if (index < pinnedTitles!.length) {
                       return Dismissible(
                         background: Container(

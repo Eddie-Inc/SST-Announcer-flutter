@@ -45,6 +45,7 @@ dependencies:
   webfeed: ^0.7.0
   flutter_animate: ^4.1.1+1
   android_alarm_manager_plus: ^3.0.4
+  flutter_datetime_picker_plus: ^2.1.0
 
 dev_dependencies:
   flutter_test:

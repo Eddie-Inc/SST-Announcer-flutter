@@ -14,7 +14,6 @@ class _NavigationExampleState extends State<NavigationExample> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -38,10 +37,10 @@ class _NavigationExampleState extends State<NavigationExample> {
       ),
       body: <Widget>[
         /// Home page
-        FeedPage(),
+        const FeedPage(),
 
         /// Settings page
-        SettingsScreen()
+        const SettingsScreen()
       ][currentPageIndex],
     );
   }
