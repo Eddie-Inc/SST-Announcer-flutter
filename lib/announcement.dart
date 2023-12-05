@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:sst_announcer/main.dart';
 import 'package:sst_announcer/services/notificationservice.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class AnnouncementPage extends StatefulWidget {
@@ -32,7 +31,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   final bodyController = TextEditingController();
   bool categoried = false;
   DateTime? dueDate;
-  Future<void> pickDate() async {
+  /*Future<void> pickDate() async {
     final newDueDate = await DatePicker.showDateTimePicker(
       context,
       showTitleActions: true,
@@ -44,7 +43,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
         dueDate = newDueDate;
       });
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +96,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          dueDate == null
+                          /*dueDate == null
                               ? IconButton(
                                   onPressed: pickDate,
                                   iconSize: 26,
@@ -112,7 +111,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                       ? Colors.grey[800]
                                       : const Color.fromRGBO(246, 242, 249, 1),
                                   elevation: 0,
-                                )
+                                )*/
                         ],
                       ),
                       actions: [
@@ -194,7 +193,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           color: backgroundColor,
                           textDecorationColor: backgroundColor),
                       /*"span": Style(
-                          fontSize: FontSize.large,
+                          fontSize: FontSize.large, 
                           color: backgroundColor,
                           textDecorationColor: backgroundColor),*/
                       "p": Style(
@@ -204,9 +203,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                       "a": Style(
                         color: Colors.blue,
                       ),
-                    },
-                    onLinkTap: (link, _, __, ___) {
-                      launch(link!);
                     },
                   ),
                 ],

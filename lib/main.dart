@@ -9,38 +9,12 @@ import 'package:sst_announcer/search.dart';
 import 'package:sst_announcer/settings.dart';
 import 'package:sst_announcer/categories/categories_list.dart';
 import 'categories/categoriespage.dart';
-import 'services/notificationservice.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 final postStreamController = StreamController<PostStream>.broadcast();
-final NotificationService service = NotificationService();
 const feedUrl = 'http://studentsblog.sst.edu.sg/feeds/posts/default?';
-
-Future<void> checkForNewPosts() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  DateTime lastCheckTime = prefs.containsKey('lastCheckTime')
-      ? DateTime.parse(prefs.getString('lastCheckTime')!)
-      : DateTime.now();
-
-  // Check for new posts in the RSS feed
-  bool newPostsAvailable =
-      await checkForNewBlogspotPosts(feedUrl, lastCheckTime);
-
-  if (newPostsAvailable) {
-    // Fetch the latest posts
-    List<Map<String, String>> latestPosts =
-        await fetchLatestBlogspotPosts(feedUrl);
-
-    // Update the last check time
-    await prefs.setString('lastCheckTime', latestPosts.first['pubDate']!);
-    service.showNotification(
-        "New announcement", "There is a new post in SST Announcer");
-  } else {
-    return;
-  }
-}
 
 Future<bool> checkForNewBlogspotPosts(
     String rssFeedUrl, DateTime lastCheckTime) async {
@@ -117,8 +91,7 @@ void main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await AndroidAlarmManager.initialize();
-  await AndroidAlarmManager.periodic(
-      const Duration(minutes: 20), 1, checkForNewPosts);
+
   runApp(const MyApp());
 }
 
@@ -176,7 +149,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    service.init();
     super.initState();
     getCategoryList().then((categoryList) {
       setState(() {
