@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sst_announcer/categories/user_categories.dart';
+import 'package:sst_announcer/feedview.dart';
 import 'package:sst_announcer/settings.dart';
 
 class NavigationExample extends StatefulWidget {

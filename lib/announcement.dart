@@ -7,7 +7,7 @@ class AnnouncementPage extends StatefulWidget {
   final String title;
   final String bodyText;
   final String author;
-  AnnouncementPage(
+  const AnnouncementPage(
       {super.key,
       required this.title,
       required this.bodyText,

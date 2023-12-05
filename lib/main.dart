@@ -2,12 +2,13 @@ import 'dart:async';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sst_announcer/bottomnavigation.dart';
+import 'package:sst_announcer/categories/storageinterface.dart';
 import 'package:sst_announcer/services/poststream.dart';
 import 'package:sst_announcer/search.dart';
 import 'package:sst_announcer/settings.dart';
-import 'package:sst_announcer/categories/categories_list.dart';
+import 'package:sst_announcer/categories/categorieslistpage.dart';
+import 'package:sst_announcer/themes.dart';
 import 'categories/categoriespage.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
@@ -62,31 +63,6 @@ Future<List<Map<String, String>>> fetchLatestBlogspotPosts(
 
 const seedcolor = Colors.red;
 
-final lightTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: seedcolor));
-final filledButtonStyle = ElevatedButton.styleFrom(
-        backgroundColor: lightTheme.colorScheme.primary,
-        foregroundColor: lightTheme.colorScheme.onPrimary,
-        elevation: 3)
-    .copyWith(elevation: MaterialStateProperty.resolveWith((states) {
-  if (states.contains(MaterialState.hovered)) {
-    return 1;
-  }
-  return 0;
-}));
-
-final darkTheme = ThemeData.dark(useMaterial3: true);
-final darkFilledButtonStyle = ElevatedButton.styleFrom(
-        backgroundColor: darkTheme.colorScheme.primary,
-        foregroundColor: darkTheme.colorScheme.onPrimary)
-    .copyWith(elevation: MaterialStateProperty.resolveWith((states) {
-  if (states.contains(MaterialState.hovered)) {
-    return 1;
-  }
-  return 0;
-}));
-
 void main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
@@ -125,27 +101,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final addCatController = TextEditingController();
   bool addCustomCat = false;
-
-  Future<List<String>> getCategoryList() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList('categoryList') ?? [];
-  }
-
-  Future<void> addCategory(String category) async {
-    final prefs = await SharedPreferences.getInstance();
-    final categoryList = await getCategoryList();
-    if (!categoryList.contains(category)) {
-      categoryList.add(category);
-      await prefs.setStringList('categoryList', categoryList);
-    }
-  }
-
-  Future<void> removeCategory(int category) async {
-    final prefs = await SharedPreferences.getInstance();
-    final categoryList = await getCategoryList();
-    categoryList.removeAt(category);
-    await prefs.setStringList('categoryList', categoryList);
-  }
 
   @override
   void initState() {
