@@ -3,7 +3,7 @@ import 'package:sst_announcer/main.dart';
 
 final lightTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: seedcolor));
+    colorScheme: ColorScheme.fromSeed(seedColor: kSeedColor));
 final filledButtonStyle = ElevatedButton.styleFrom(
         backgroundColor: lightTheme.colorScheme.primary,
         foregroundColor: lightTheme.colorScheme.onPrimary,
