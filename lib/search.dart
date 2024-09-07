@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
-import 'package:skeletons/skeletons.dart';
 import 'package:sst_announcer/announcement.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:intl/intl.dart';
@@ -116,7 +115,7 @@ class _BlogPageState extends State<BlogPage> {
           const SizedBox(height: 16),
           Expanded(
             child: _isLoading == true
-                ? SkeletonListView()
+                ? Placeholder()
                 : ListView.separated(
                     separatorBuilder: (separatorContext, index) =>
                         const Divider(

@@ -5,7 +5,6 @@ import 'package:sst_announcer/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
 import '../services/poststream.dart';
-import 'package:skeletons/skeletons.dart';
 
 class AddPostBotttomSheet extends StatefulWidget {
   final String customCategoryName;
@@ -69,7 +68,7 @@ class _AddPostBotttomSheetState extends State<AddPostBotttomSheet> {
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
       child: _isLoading == true
-          ? SkeletonListView()
+          ? Placeholder()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,

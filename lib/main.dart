@@ -12,7 +12,6 @@ import 'categories/categoriespage.dart';
 import 'services/notificationservice.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 final postStreamController = StreamController<PostStream>.broadcast();
 final NotificationService service = NotificationService();
@@ -88,9 +87,7 @@ Future<List<Map<String, String>>> fetchLatestBlogspotPosts(
 
 const seedcolor = Colors.red;
 
-final lightTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: seedcolor));
+final lightTheme = ThemeData.light(useMaterial3: true);
 final filledButtonStyle = ElevatedButton.styleFrom(
         backgroundColor: lightTheme.colorScheme.primary,
         foregroundColor: lightTheme.colorScheme.onPrimary,
@@ -116,9 +113,9 @@ final darkFilledButtonStyle = ElevatedButton.styleFrom(
 void main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
-  await AndroidAlarmManager.initialize();
-  await AndroidAlarmManager.periodic(
-      const Duration(minutes: 20), 1, checkForNewPosts);
+  // await AndroidAlarmManager.initialize();
+  // await AndroidAlarmManager.periodic(
+  //     const Duration(minutes: 20), 1, checkForNewPosts);
   runApp(const MyApp());
 }
 

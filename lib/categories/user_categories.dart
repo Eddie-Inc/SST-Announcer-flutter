@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:skeletons/skeletons.dart';
 import 'package:sst_announcer/announcement.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -103,7 +102,7 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
       body: Container(
         child: _isLoading
-            ? SkeletonListView()
+            ? Placeholder()
             : RefreshIndicator(
                 onRefresh: _refresh,
                 child: ListView.separated(
@@ -181,7 +180,8 @@ class _FeedPageState extends State<FeedPage> {
                                 ),
                                 Text(
                                   pinnedAuthors![index],
-                                  style: const TextStyle(fontWeight: FontWeight.w300),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w300),
                                 ),
                               ],
                             ),
@@ -285,7 +285,8 @@ class _FeedPageState extends State<FeedPage> {
                               ),
                               Text(
                                 author,
-                                style: const TextStyle(fontWeight: FontWeight.w300),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w300),
                               ),
                             ],
                           ),

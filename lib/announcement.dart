@@ -3,14 +3,13 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:sst_announcer/main.dart';
 import 'package:sst_announcer/services/notificationservice.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class AnnouncementPage extends StatefulWidget {
   final String title;
-  String bodyText;
-  String author;
-  AnnouncementPage(
+  final String bodyText;
+  final String author;
+  const AnnouncementPage(
       {super.key,
       required this.title,
       required this.bodyText,
@@ -32,19 +31,19 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   final bodyController = TextEditingController();
   bool categoried = false;
   DateTime? dueDate;
-  Future<void> pickDate() async {
-    final newDueDate = await DatePicker.showDateTimePicker(
-      context,
-      showTitleActions: true,
-      onChanged: (date) => date,
-      onConfirm: (date) {},
-    );
-    if (newDueDate != null) {
-      setState(() {
-        dueDate = newDueDate;
-      });
-    }
-  }
+  // Future<void> pickDate() async {
+  //   final newDueDate = await DatePicker.showDateTimePicker(
+  //     context,
+  //     showTitleActions: true,
+  //     onChanged: (date) => date,
+  //     onConfirm: (date) {},
+  //   );
+  //   if (newDueDate != null) {
+  //     setState(() {
+  //       dueDate = newDueDate;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -100,14 +99,14 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           ),
                           dueDate == null
                               ? IconButton(
-                                  onPressed: pickDate,
+                                  onPressed: () {},
                                   iconSize: 26,
                                   icon: const Icon(
                                       Icons.event_available_outlined),
                                 )
                               : ActionChip(
                                   label: Text(formattedDate),
-                                  onPressed: pickDate,
+                                  onPressed: () {},
                                   backgroundColor: theme.brightness ==
                                           Brightness.dark
                                       ? Colors.grey[800]
@@ -207,7 +206,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                         color: Colors.blue,
                       ),
                     },
-                    onLinkTap: (link, _, __, ___) {
+                    onLinkTap: (link, _, ___) {
                       launch(link!);
                     },
                   ),
