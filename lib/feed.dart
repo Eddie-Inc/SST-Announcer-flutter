@@ -23,13 +23,12 @@ class _BlogPageState extends State<BlogPage> {
   String? _selectedCategory;
   String? _searchTerm;
 
-  @override
-  void initState() {
-    super.initState();
-    _getPosts();
-  }
+  TextEditingController categoryController = TextEditingController();
 
   void _getPosts() async {
+    setState(() {
+      _isLoading = true;
+    });
     final response = await http.get(Uri.parse(url));
     final feed = xml.XmlDocument.parse(response.body);
     final posts = feed.findAllElements('entry').toList();
@@ -84,6 +83,15 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getPosts();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -91,8 +99,10 @@ class _BlogPageState extends State<BlogPage> {
           Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
+              tilePadding: EdgeInsets.symmetric(horizontal: 10),
               title: TextField(
                 decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
                   labelText: 'Search',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20.0)),
@@ -101,7 +111,7 @@ class _BlogPageState extends State<BlogPage> {
               ),
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -109,33 +119,53 @@ class _BlogPageState extends State<BlogPage> {
                         "Category",
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(
                         width: 20,
                       ),
-                      DropdownMenu(
-                        menuHeight: MediaQuery.of(context).size.height / 2,
-                        inputDecorationTheme: InputDecorationTheme(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20))),
-                        initialSelection: _selectedCategory,
-                        dropdownMenuEntries: _categories
-                            .map(
-                              (category) => DropdownMenuEntry(
-                                value: category!,
-                                label: toBeginningOfSentenceCase(category)!,
-                              ),
-                            )
-                            .toList(),
-                        onSelected: (value) {
-                          setState(() {
-                            _selectedCategory = value;
-                          });
-                        },
+                      Expanded(
+                        child: DropdownMenu(
+                          controller: categoryController,
+                          menuHeight: MediaQuery.of(context).size.height / 2,
+                          inputDecorationTheme: InputDecorationTheme(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20))),
+                          initialSelection: _selectedCategory,
+                          dropdownMenuEntries: _categories
+                              .map(
+                                (category) => DropdownMenuEntry(
+                                  value: category!,
+                                  label: toBeginningOfSentenceCase(category)!,
+                                ),
+                              )
+                              .toList(),
+                          onSelected: (value) {
+                            setState(() {
+                              _selectedCategory = value;
+                            });
+                          },
+                        ),
                       ),
                     ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          categoryController.text = "";
+                          _selectedCategory = null;
+                        });
+                      },
+                      child: Text(
+                        "Reset filters",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -144,74 +174,121 @@ class _BlogPageState extends State<BlogPage> {
           SizedBox(
             height: 10,
           ),
-          Divider(
-            color: Colors.grey,
-            thickness: 0.4,
-            height: 1,
-          ),
           Expanded(
-            child: Skeletonizer(
-              enabled: _isLoading,
-              child: ListView.separated(
-                separatorBuilder: (separatorContext, index) => const Divider(
-                  color: Colors.grey,
-                  thickness: 0.4,
-                  height: 1,
-                ),
-                itemCount: filteredPosts.length,
-                itemBuilder: (context, index) {
-                  final post = filteredPosts[index];
-                  final title = post.findElements('title').first.text;
-                  final content = post.findElements('content').first.text;
-                  final author = post
-                      .findElements("author")
-                      .first
-                      .findElements("name")
-                      .first
-                      .text;
-                  return Ink(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                    child: ListTile(
-                      onTap: () {
-                        var navigator = Navigator.of(context);
-                        navigator.push(
-                          CupertinoPageRoute(
-                            builder: (context) {
-                              return AnnouncementPage(
-                                author: author,
-                                title: title,
-                                bodyText: content,
-                              );
-                            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: !_isLoading
+                  ? ListView.separated(
+                      separatorBuilder: (separatorContext, index) => SizedBox(
+                        height: 5,
+                      ),
+                      itemCount: filteredPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = filteredPosts[index];
+                        final title = post.findElements('title').first.text;
+                        final content = post.findElements('content').first.text;
+                        final author = post
+                            .findElements("author")
+                            .first
+                            .findElements("name")
+                            .first
+                            .text;
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                                color: Theme.of(context).primaryColorLight),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              onTap: () {
+                                var navigator = Navigator.of(context);
+                                navigator.push(
+                                  CupertinoPageRoute(
+                                    builder: (context) {
+                                      return AnnouncementPage(
+                                        author: author,
+                                        title: title,
+                                        bodyText: content,
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  )
+                                ],
+                              ),
+                              subtitle: Column(
+                                children: [
+                                  Text(
+                                    parseFragment(content).text!,
+                                    maxLines: 3,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         );
                       },
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 20),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          )
-                        ],
-                      ),
-                      subtitle: Column(
-                        children: [
-                          Text(
-                            parseFragment(content).text!,
-                            maxLines: 3,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ],
+                    )
+                  : Skeletonizer(
+                      child: ListView.separated(
+                        separatorBuilder: (separatorContext, index) => SizedBox(
+                          height: 5,
+                        ),
+                        itemCount: 6,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(
+                                  color: Theme.of(context).primaryColorLight),
+                            ),
+                            child: const Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    )
+                                  ],
+                                ),
+                                subtitle: Column(
+                                  children: [
+                                    Text(
+                                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                                      maxLines: 3,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
             ),
           ),
         ],

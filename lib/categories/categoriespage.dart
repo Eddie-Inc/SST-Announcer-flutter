@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:sst_announcer/announcement.dart';
+import 'package:sst_announcer/homepage.dart';
 import 'package:sst_announcer/main.dart';
 import 'package:webfeed/webfeed.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,8 @@ class CategoryPage extends StatefulWidget {
   final String category;
   final bool isCustom;
 
-  const CategoryPage({super.key, required this.category, required this.isCustom});
+  const CategoryPage(
+      {super.key, required this.category, required this.isCustom});
 
   @override
   _CategoryPageState createState() => _CategoryPageState();

@@ -50,57 +50,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
       posts = document.findAllElements('entry').toList();
       cacheSize = _getSize(file!);
     });
-    print(posts);
-    print(cacheSize);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Settings"),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Text(
-                "Cache size: $cacheSize bytes",
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Divider(
-                height: 1,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              ExpansionTile(
-                title: const Text("Show full cache string"),
-                children: [
-                  SingleChildScrollView(
-                    child: Text(posts.toString()),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  DefaultCacheManager().emptyCache();
-                  print("emptied");
-                  print(cacheSize);
-                  initState();
-                },
-                child: const Text("Clear cache"),
-              )
-            ],
-          ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Text(
+              "Cache size: $cacheSize bytes",
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Divider(
+              height: 1,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ExpansionTile(
+              title: const Text("Show full cache string"),
+              children: [
+                SingleChildScrollView(
+                  child: Text(posts.toString()),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                DefaultCacheManager().emptyCache();
+                print("emptied");
+                print(cacheSize);
+                initState();
+              },
+              child: const Text("Clear cache"),
+            )
+          ],
         ),
       ),
     );

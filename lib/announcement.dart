@@ -163,56 +163,75 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(12.5),
           child: Ink(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: TextStyle(
-                        color: backgroundColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                      color: backgroundColor,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.author,
+                  style: TextStyle(fontSize: 15),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Html(
+                      data: parsedString,
+                      style: {
+                        "body": Style(
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                            fontSize: FontSize.large,
+                            color: backgroundColor,
+                            textDecorationColor: backgroundColor),
+                        "content": Style(
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                            fontSize: FontSize.large,
+                            color: backgroundColor,
+                            textDecorationColor: backgroundColor),
+                        "div": Style(
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                            fontSize: FontSize.large,
+                            color: backgroundColor,
+                            textDecorationColor: backgroundColor),
+                        /*"span": Style(
+                            fontSize: FontSize.large,
+                            color: backgroundColor,
+                            textDecorationColor: backgroundColor),*/
+                        "p": Style(
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                            fontSize: FontSize.large,
+                            color: backgroundColor,
+                            textDecorationColor: backgroundColor),
+                        "a": Style(
+                            textDecoration: TextDecoration.none,
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      },
+                      onLinkTap: (link, _, ___) {
+                        launch(link!);
+                      },
+                    ),
                   ),
-                  Text(widget.author),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Html(
-                    data: parsedString,
-                    style: {
-                      "body": Style(
-                          fontSize: FontSize.large,
-                          color: backgroundColor,
-                          textDecorationColor: backgroundColor),
-                      "content": Style(
-                          fontSize: FontSize.large,
-                          color: backgroundColor,
-                          textDecorationColor: backgroundColor),
-                      "div": Style(
-                          fontSize: FontSize.large,
-                          color: backgroundColor,
-                          textDecorationColor: backgroundColor),
-                      /*"span": Style(
-                          fontSize: FontSize.large,
-                          color: backgroundColor,
-                          textDecorationColor: backgroundColor),*/
-                      "p": Style(
-                          fontSize: FontSize.large,
-                          color: backgroundColor,
-                          textDecorationColor: backgroundColor),
-                      "a": Style(
-                        color: Colors.blue,
-                      ),
-                    },
-                    onLinkTap: (link, _, ___) {
-                      launch(link!);
-                    },
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
