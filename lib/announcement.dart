@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:sst_announcer/main.dart';
 import 'package:sst_announcer/services/notificationservice.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 class AnnouncementPage extends StatefulWidget {
   final String title;
-  final String bodyText;
-  final String author;
-  const AnnouncementPage(
+  String bodyText;
+  String author;
+  AnnouncementPage(
       {super.key,
       required this.title,
       required this.bodyText,
@@ -28,9 +31,24 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   final bodyController = TextEditingController();
   bool categoried = false;
+  DateTime? dueDate;
+  Future<void> pickDate() async {
+    final newDueDate = await DatePicker.showDateTimePicker(
+      context,
+      showTitleActions: true,
+      onChanged: (date) => date,
+      onConfirm: (date) {},
+    );
+    if (newDueDate != null) {
+      setState(() {
+        dueDate = newDueDate;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final titleController = TextEditingController(text: widget.title);
     Color backgroundColor = Colors.white;
     bool isDarkMode =
         (MediaQuery.of(context).platformBrightness == Brightness.dark);
@@ -39,6 +57,8 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     } else {
       backgroundColor = Colors.black;
     }
+    DateTime? dueDate;
+    final theme = Theme.of(context);
     final originalString = widget.bodyText;
     final parsedString = originalString.replaceAllMapped(
         RegExp(
@@ -47,11 +67,13 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
             caseSensitive: false), (match) {
       return '"${match.group(0)}"';
     });
+    final formattedDate =
+        dueDate == null ? "" : DateFormat("dd/MM/yyyy").format(dueDate);
 
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          /*IconButton(
+        actions: [
+          IconButton(
               onPressed: () {
                 showDialog(
                   context: context,
@@ -84,7 +106,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                       Icons.event_available_outlined),
                                 )
                               : ActionChip(
-                                  label: Text(formattedDate as String),
+                                  label: Text(formattedDate),
                                   onPressed: pickDate,
                                   backgroundColor: theme.brightness ==
                                           Brightness.dark
@@ -109,13 +131,14 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               onPressed: () {
                                 final navigator = Navigator.of(context);
                                 navigator.pop();
-                                if (titleController.text == "") {
+                                if (titleController.text == "" ||
+                                    dueDate == null) {
                                   return;
                                 } else {
                                   service.scheduleNotification(
                                       title: titleController.text,
                                       body: bodyController.text,
-                                      scheduledNotificationDateTime: dueDate!);
+                                      scheduledNotificationDateTime: dueDate);
                                 }
                               },
                               style: filledButtonStyle,
@@ -129,9 +152,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                   },
                 );
               },
-              icon: const Icon(Icons.calendar_month))*/
+              icon: const Icon(Icons.calendar_month))
         ],
-        title: const Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text("Announcement"),
@@ -173,7 +196,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           color: backgroundColor,
                           textDecorationColor: backgroundColor),
                       /*"span": Style(
-                          fontSize: FontSize.large, 
+                          fontSize: FontSize.large,
                           color: backgroundColor,
                           textDecorationColor: backgroundColor),*/
                       "p": Style(
@@ -184,8 +207,8 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                         color: Colors.blue,
                       ),
                     },
-                    onLinkTap: (url, attributes, element) {
-                      launchUrl(Uri.parse(url!));
+                    onLinkTap: (link, _, __, ___) {
+                      launch(link!);
                     },
                   ),
                 ],
