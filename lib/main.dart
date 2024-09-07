@@ -4,10 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sst_announcer/services/poststream.dart';
-import 'package:sst_announcer/search.dart';
+import 'package:sst_announcer/feed.dart';
 import 'package:sst_announcer/settings.dart';
-import 'package:sst_announcer/categories/categories_list.dart';
-import 'package:sst_announcer/categories/user_categories.dart';
 import 'categories/categoriespage.dart';
 import 'services/notificationservice.dart';
 import 'package:http/http.dart' as http;
@@ -129,9 +127,7 @@ class MyApp extends StatelessWidget {
       title: 'SST Announcer',
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const HomePage(title: 'All announcements')
-          .animate()
-          .shimmer(delay: 10.ms, duration: 450.ms),
+      home: HomePage(title: 'All announcements'),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -206,26 +202,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(
                     height: 10,
-                  ),
-                  ExpansionTile(
-                    clipBehavior: Clip.none,
-                    title: const Text(
-                      "Categories",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ).animate().fade(duration: 225.ms).scale(),
-                    children: const [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CategoryListPage(),
-                    ],
-                  ),
-                  Divider(
-                    thickness: 0.5,
-                    color: isDarkThemeEnabled(context)
-                        ? Colors.white
-                        : Colors.black,
                   ),
                   ExpansionTile(
                     clipBehavior: Clip.hardEdge,
@@ -401,21 +377,6 @@ class _HomePageState extends State<HomePage> {
             fontSize: 25,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              var navigator = Navigator.of(context);
-              navigator.push(
-                CupertinoPageRoute(
-                  builder: (context) {
-                    return const BlogPage();
-                  },
-                ),
-              );
-            },
-            icon: const Icon(Icons.search),
-          )
-        ],
       ),
       body: Ink(
         child: Center(
@@ -426,7 +387,7 @@ class _HomePageState extends State<HomePage> {
                 height: 10,
               ),
               Expanded(
-                child: FeedPage(),
+                child: BlogPage(),
               ),
             ],
           ),

@@ -40,6 +40,7 @@ dependencies:
   flutter_local_notifications: ^9.8.0
   webfeed: ^0.7.0
   flutter_animate: ^4.1.1+1
+  skeletonizer: ^1.4.2
 
 dev_dependencies:
   flutter_test:

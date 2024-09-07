@@ -72,93 +72,94 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Set reminder"),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextField(
-                            controller: titleController,
-                            decoration: const InputDecoration(
-                              hintText: "Notification title",
-                            ),
-                          ),
-                          TextField(
-                            controller: bodyController,
-                            decoration: const InputDecoration(
-                                hintText: "Notification description"),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          dueDate == null
-                              ? IconButton(
-                                  onPressed: () {},
-                                  iconSize: 26,
-                                  icon: const Icon(
-                                      Icons.event_available_outlined),
-                                )
-                              : ActionChip(
-                                  label: Text(formattedDate),
-                                  onPressed: () {},
-                                  backgroundColor: theme.brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey[800]
-                                      : const Color.fromRGBO(246, 242, 249, 1),
-                                  elevation: 0,
-                                )
-                        ],
-                      ),
-                      actions: [
-                        Center(
-                          child: Row(children: [
-                            TextButton(
-                              onPressed: () {
-                                final navigator = Navigator.of(context);
-                                navigator.pop();
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: () {
-                                final navigator = Navigator.of(context);
-                                navigator.pop();
-                                if (titleController.text == "" ||
-                                    dueDate == null) {
-                                  return;
-                                } else {
-                                  service.scheduleNotification(
-                                      title: titleController.text,
-                                      body: bodyController.text,
-                                      scheduledNotificationDateTime: dueDate);
-                                }
-                              },
-                              style: filledButtonStyle,
-                              child: const Text("Confirm"),
-                            ),
-                          ]),
-                        )
-                      ],
-                      alignment: Alignment.center,
-                    );
-                  },
-                );
-              },
-              icon: const Icon(Icons.calendar_month))
+          // IconButton(
+          //   onPressed: () {
+          //     showDialog(
+          //       context: context,
+          //       builder: (BuildContext context) {
+          //         return AlertDialog(
+          //           title: const Text("Set reminder"),
+          //           content: Column(
+          //             mainAxisSize: MainAxisSize.min,
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               TextField(
+          //                 controller: titleController,
+          //                 decoration: const InputDecoration(
+          //                   hintText: "Notification title",
+          //                 ),
+          //               ),
+          //               TextField(
+          //                 controller: bodyController,
+          //                 decoration: const InputDecoration(
+          //                     hintText: "Notification description"),
+          //               ),
+          //               const SizedBox(
+          //                 height: 10,
+          //               ),
+          //               dueDate == null
+          //                   ? IconButton(
+          //                       onPressed: () {},
+          //                       iconSize: 26,
+          //                       icon:
+          //                           const Icon(Icons.event_available_outlined),
+          //                     )
+          //                   : ActionChip(
+          //                       label: Text(formattedDate),
+          //                       onPressed: () {},
+          //                       backgroundColor: theme.brightness ==
+          //                               Brightness.dark
+          //                           ? Colors.grey[800]
+          //                           : const Color.fromRGBO(246, 242, 249, 1),
+          //                       elevation: 0,
+          //                     )
+          //             ],
+          //           ),
+          //           actions: [
+          //             Center(
+          //               child: Row(children: [
+          //                 TextButton(
+          //                   onPressed: () {
+          //                     final navigator = Navigator.of(context);
+          //                     navigator.pop();
+          //                   },
+          //                   child: const Text("Cancel"),
+          //                 ),
+          //                 const Spacer(),
+          //                 ElevatedButton(
+          //                   onPressed: () {
+          //                     final navigator = Navigator.of(context);
+          //                     navigator.pop();
+          //                     if (titleController.text == "" ||
+          //                         dueDate == null) {
+          //                       return;
+          //                     } else {
+          //                       service.scheduleNotification(
+          //                           title: titleController.text,
+          //                           body: bodyController.text,
+          //                           scheduledNotificationDateTime: dueDate);
+          //                     }
+          //                   },
+          //                   style: filledButtonStyle,
+          //                   child: const Text("Confirm"),
+          //                 ),
+          //               ]),
+          //             )
+          //           ],
+          //           alignment: Alignment.center,
+          //         );
+          //       },
+          //     );
+          //   },
+          //   icon: const Icon(Icons.calendar_month),
+          // ),
         ],
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text("Announcement"),
-          ],
-        ),
+        // title: Row(
+        //   mainAxisAlignment: MainAxisAlignment.start,
+        //   children: [
+        //     Text("Announcement"),
+        //   ],
+        // ),
       ),
       body: SafeArea(
         child: Padding(
