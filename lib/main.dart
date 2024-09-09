@@ -1,14 +1,9 @@
 import 'dart:async';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sst_announcer/homepage.dart';
 import 'package:sst_announcer/services/poststream.dart';
-import 'package:sst_announcer/feed.dart';
-import 'package:sst_announcer/settings.dart';
-import 'categories/categoriespage.dart';
 import 'services/notificationservice.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
@@ -129,7 +124,7 @@ class MyApp extends StatelessWidget {
       title: 'SST Announcer',
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: HomePage(title: 'All announcements'),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

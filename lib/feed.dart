@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sst_announcer/announcement.dart';
 import 'package:xml/xml.dart' as xml;
@@ -15,17 +16,26 @@ class BlogPage extends StatefulWidget {
 }
 
 class _BlogPageState extends State<BlogPage> {
-  bool _isLoading = true;
+  int _numPosts = 10;
 
-  final url = 'http://studentsblog.sst.edu.sg/feeds/posts/default';
+  bool _isLoading = true;
+  bool loadingMorePosts = false;
+
   List<xml.XmlElement> _posts = [];
   List<String?> _categories = [];
   String? _selectedCategory;
   String? _searchTerm;
 
+  String? renderMode;
+
+  final _scrollController = ScrollController();
+
   TextEditingController categoryController = TextEditingController();
 
   void _getPosts() async {
+    final url =
+        'http://studentsblog.sst.edu.sg/feeds/posts/default?max-results=$_numPosts';
+
     setState(() {
       _isLoading = true;
     });
@@ -47,10 +57,23 @@ class _BlogPageState extends State<BlogPage> {
     });
   }
 
+  Future<void> _refresh() async {
+    final response = await http.get(Uri.parse(
+        'http://studentsblog.sst.edu.sg/feeds/posts/default?max-results=$_numPosts'));
+    final body = response.body;
+    final document = xml.XmlDocument.parse(body);
+    final posts = document.findAllElements('entry').toList();
+    setState(() {
+      _posts = posts;
+      loadingMorePosts = false;
+    });
+  }
+
   List<xml.XmlElement> get filteredPosts {
     if (_selectedCategory == null && _searchTerm == null) {
       return _posts;
     }
+
     var filteredPosts = _posts;
     if (_selectedCategory != null) {
       filteredPosts = filteredPosts
@@ -60,6 +83,7 @@ class _BlogPageState extends State<BlogPage> {
               ))
           .toList();
     }
+
     if (_searchTerm != null) {
       filteredPosts = filteredPosts
           .where((post) =>
@@ -92,8 +116,39 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        bool isTop = _scrollController.position.pixels == 0;
+        if (isTop) {
+          print('scrolled to the top');
+        } else {
+          setState(() {
+            _numPosts += 10;
+            loadingMorePosts = true;
+            _refresh();
+          });
+        }
+      }
+    });
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "All announcements",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Theme(
@@ -129,8 +184,10 @@ class _BlogPageState extends State<BlogPage> {
                           controller: categoryController,
                           menuHeight: MediaQuery.of(context).size.height / 2,
                           inputDecorationTheme: InputDecorationTheme(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20))),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
                           initialSelection: _selectedCategory,
                           dropdownMenuEntries: _categories
                               .map(
@@ -171,79 +228,80 @@ class _BlogPageState extends State<BlogPage> {
               ],
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 5),
               child: !_isLoading
-                  ? ListView.separated(
-                      separatorBuilder: (separatorContext, index) => SizedBox(
-                        height: 5,
-                      ),
-                      itemCount: filteredPosts.length,
-                      itemBuilder: (context, index) {
-                        final post = filteredPosts[index];
-                        final title = post.findElements('title').first.text;
-                        final content = post.findElements('content').first.text;
-                        final author = post
-                            .findElements("author")
-                            .first
-                            .findElements("name")
-                            .first
-                            .text;
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(
-                                color: Theme.of(context).primaryColorLight),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListTile(
-                              onTap: () {
-                                var navigator = Navigator.of(context);
-                                navigator.push(
-                                  CupertinoPageRoute(
-                                    builder: (context) {
-                                      return AnnouncementPage(
-                                        author: author,
-                                        title: title,
-                                        bodyText: content,
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    title,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  )
-                                ],
-                              ),
-                              subtitle: Column(
-                                children: [
-                                  Text(
-                                    parseFragment(content).text!,
-                                    maxLines: 3,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ],
+                  ? RefreshIndicator(
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        separatorBuilder: (separatorContext, index) => SizedBox(
+                          height: 5,
+                        ),
+                        itemCount: filteredPosts.length,
+                        itemBuilder: (context, index) {
+                          final post = filteredPosts[index];
+                          final title = post.findElements('title').first.text;
+                          final content =
+                              post.findElements('content').first.text;
+                          final author = post
+                              .findElements("author")
+                              .first
+                              .findElements("name")
+                              .first
+                              .text;
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(
+                                  color: Theme.of(context).primaryColorLight),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                onTap: () {
+                                  var navigator = Navigator.of(context);
+                                  navigator.push(
+                                    CupertinoPageRoute(
+                                      builder: (context) {
+                                        return AnnouncementPage(
+                                          author: author,
+                                          title: title,
+                                          bodyText: content,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      title,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    )
+                                  ],
+                                ),
+                                subtitle: Column(
+                                  children: [
+                                    Text(
+                                      parseFragment(content).text!,
+                                      maxLines: 3,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    )
+                          );
+                        },
+                      ),
+                      onRefresh: _refresh)
                   : Skeletonizer(
                       child: ListView.separated(
                         separatorBuilder: (separatorContext, index) => SizedBox(
@@ -291,6 +349,23 @@ class _BlogPageState extends State<BlogPage> {
                     ),
             ),
           ),
+          loadingMorePosts
+              ? Column(
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      "Loading more posts...",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                )
+              : Container(),
         ],
       ),
     );

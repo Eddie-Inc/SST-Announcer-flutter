@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sst_announcer/main.dart';
 import 'package:sst_announcer/services/notificationservice.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class AnnouncementPage extends StatefulWidget {
   final String title;
@@ -31,6 +33,21 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   final bodyController = TextEditingController();
   bool categoried = false;
   DateTime? dueDate;
+
+  String? renderMode;
+
+  void getPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    renderMode = prefs.getString("renderMode") ?? "Parsed HTML";
+    print(renderMode);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   // Future<void> pickDate() async {
   //   final newDueDate = await DatePicker.showDateTimePicker(
   //     context,
@@ -47,8 +64,11 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   @override
   Widget build(BuildContext context) {
+    getPreferences();
+
     final titleController = TextEditingController(text: widget.title);
     Color backgroundColor = Colors.white;
+
     bool isDarkMode =
         (MediaQuery.of(context).platformBrightness == Brightness.dark);
     if (isDarkMode) {
@@ -56,9 +76,10 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     } else {
       backgroundColor = Colors.black;
     }
+
     DateTime? dueDate;
-    final theme = Theme.of(context);
     final originalString = widget.bodyText;
+
     final parsedString = originalString.replaceAllMapped(
         RegExp(
             r'((?:font-size|color|background-color):\s*(?:rgba\([^)]*\)|[^;]*);?)',
@@ -66,8 +87,13 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
             caseSensitive: false), (match) {
       return '"${match.group(0)}"';
     });
-    final formattedDate =
-        dueDate == null ? "" : DateFormat("dd/MM/yyyy").format(dueDate);
+
+    // final formattedDate =
+    //     dueDate == null ? "" : DateFormat("dd/MM/yyyy").format(dueDate);
+
+    WebViewController htmlViewController = WebViewController()
+      ..loadHtmlString(originalString)
+      ..enableZoom(true);
 
     return Scaffold(
       appBar: AppBar(
@@ -183,52 +209,72 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                   style: TextStyle(fontSize: 15),
                 ),
                 const SizedBox(
+                  height: 15,
+                ),
+                Divider(
+                  height: 1,
+                ),
+                SizedBox(
                   height: 10,
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Html(
-                      data: parsedString,
-                      style: {
-                        "body": Style(
-                            fontFamily:
-                                DefaultTextStyle.of(context).style.fontFamily,
-                            fontSize: FontSize.large,
-                            color: backgroundColor,
-                            textDecorationColor: backgroundColor),
-                        "content": Style(
-                            fontFamily:
-                                DefaultTextStyle.of(context).style.fontFamily,
-                            fontSize: FontSize.large,
-                            color: backgroundColor,
-                            textDecorationColor: backgroundColor),
-                        "div": Style(
-                            fontFamily:
-                                DefaultTextStyle.of(context).style.fontFamily,
-                            fontSize: FontSize.large,
-                            color: backgroundColor,
-                            textDecorationColor: backgroundColor),
-                        /*"span": Style(
+                    child: renderMode == "Parsed HTML"
+                        ? Html(
+                            data: parsedString,
+                            style: {
+                              "body": Style(
+                                  fontFamily: DefaultTextStyle.of(context)
+                                      .style
+                                      .fontFamily,
+                                  fontSize: FontSize.large,
+                                  color: backgroundColor,
+                                  textDecorationColor: backgroundColor),
+                              "content": Style(
+                                  fontFamily: DefaultTextStyle.of(context)
+                                      .style
+                                      .fontFamily,
+                                  fontSize: FontSize.large,
+                                  color: backgroundColor,
+                                  textDecorationColor: backgroundColor),
+                              "div": Style(
+                                  fontFamily: DefaultTextStyle.of(context)
+                                      .style
+                                      .fontFamily,
+                                  fontSize: FontSize.large,
+                                  color: backgroundColor,
+                                  textDecorationColor: backgroundColor),
+                              /*"span": Style(
                             fontSize: FontSize.large,
                             color: backgroundColor,
                             textDecorationColor: backgroundColor),*/
-                        "p": Style(
-                            fontFamily:
-                                DefaultTextStyle.of(context).style.fontFamily,
-                            fontSize: FontSize.large,
-                            color: backgroundColor,
-                            textDecorationColor: backgroundColor),
-                        "a": Style(
-                            textDecoration: TextDecoration.none,
-                            fontFamily:
-                                DefaultTextStyle.of(context).style.fontFamily,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold),
-                      },
-                      onLinkTap: (link, _, ___) {
-                        launch(link!);
-                      },
-                    ),
+                              "p": Style(
+                                  fontFamily: DefaultTextStyle.of(context)
+                                      .style
+                                      .fontFamily,
+                                  fontSize: FontSize.large,
+                                  color: backgroundColor,
+                                  textDecorationColor: backgroundColor),
+                              "a": Style(
+                                  textDecoration: TextDecoration.none,
+                                  fontFamily: DefaultTextStyle.of(context)
+                                      .style
+                                      .fontFamily,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            },
+                            onLinkTap: (link, _, ___) {
+                              launch(link!);
+                            },
+                          )
+                        : (renderMode == "Web View"
+                            ? SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.6,
+                                child: WebViewWidget(
+                                    controller: htmlViewController),
+                              )
+                            : SelectableText(originalString)),
                   ),
                 ),
               ],

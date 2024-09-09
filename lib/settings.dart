@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart' as xml;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -36,10 +37,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<xml.XmlElement> posts = [];
   File? file;
 
+  List<String?> RenderingModes = ["Parsed HTML", "Web View", "Raw Text"];
+  String? selectedRenderMode = "Parsed HTML";
+
   @override
   void initState() {
     super.initState();
     getCache();
+    getSettings();
+  }
+
+  void getSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    selectedRenderMode = prefs.getString("renderMode") ?? "Parsed HTML";
+  }
+
+  void saveSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("renderMode", selectedRenderMode ?? "Parsed HTML");
+    print(prefs.getString("renderMode"));
   }
 
   void getCache() async {
@@ -49,51 +65,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       posts = document.findAllElements('entry').toList();
       cacheSize = _getSize(file!);
+      print(cacheSize);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Text(
-              "Cache size: $cacheSize bytes",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Divider(
-              height: 1,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ExpansionTile(
-              title: const Text("Show full cache string"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Settings",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(15),
+            child: ListView(
               children: [
-                SingleChildScrollView(
-                  child: Text(posts.toString()),
+                Text(
+                  "Cache size: $cacheSize bytes",
+                  style: const TextStyle(fontSize: 18),
                 ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Divider(
+                  height: 1,
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Render mode",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    Spacer(),
+                    DropdownMenu(
+                      dropdownMenuEntries: RenderingModes.map(
+                        (mode) => DropdownMenuEntry(value: mode, label: mode!),
+                      ).toList(),
+                      inputDecorationTheme: InputDecorationTheme(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      initialSelection: selectedRenderMode,
+                      onSelected: (value) {
+                        setState(() {
+                          selectedRenderMode = value!;
+                          saveSettings();
+                        });
+                      },
+                    ),
+                  ],
+                )
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                DefaultCacheManager().emptyCache();
-                print("emptied");
-                print(cacheSize);
-                initState();
-              },
-              child: const Text("Clear cache"),
-            )
-          ],
+          ),
         ),
       ),
     );
