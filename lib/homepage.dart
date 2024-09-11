@@ -2,7 +2,7 @@ import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:sst_announcer/feed.dart";
-import "package:sst_announcer/folderpage.dart";
+import "package:sst_announcer/folders/folderpage.dart";
 import "package:sst_announcer/settings.dart";
 
 List<String> customCats = [];

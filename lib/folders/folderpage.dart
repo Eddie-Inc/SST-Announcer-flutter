@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sst_announcer/foldercontents.dart';
-import 'package:sst_announcer/storagecontroller.dart';
+import 'package:sst_announcer/folders/foldercontents.dart';
+import 'package:sst_announcer/folders/storagecontroller.dart';
 
 class FolderPage extends StatefulWidget {
   const FolderPage({super.key});
