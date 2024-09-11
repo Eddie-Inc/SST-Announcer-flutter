@@ -270,6 +270,7 @@ class _BlogPageState extends State<BlogPage> {
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 child: !_isLoading
                     ? RefreshIndicator(
+                        onRefresh: _refresh,
                         child: ListView.separated(
                           controller: _scrollController,
                           separatorBuilder: (separatorContext, index) =>
@@ -303,6 +304,7 @@ class _BlogPageState extends State<BlogPage> {
                                       CupertinoPageRoute(
                                         builder: (context) {
                                           return AnnouncementPage(
+                                            parent: "",
                                             renderMode: renderMode!,
                                             author: author,
                                             title: title,
@@ -340,8 +342,7 @@ class _BlogPageState extends State<BlogPage> {
                               ),
                             );
                           },
-                        ),
-                        onRefresh: _refresh)
+                        ))
                     : Skeletonizer(
                         child: ListView.separated(
                           separatorBuilder: (separatorContext, index) =>

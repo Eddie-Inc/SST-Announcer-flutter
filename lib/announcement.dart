@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:sst_announcer/storagecontroller.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webfeed/domain/media/media.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AnnouncementPage extends StatefulWidget {
@@ -9,8 +9,10 @@ class AnnouncementPage extends StatefulWidget {
   final String title;
   final String bodyText;
   final String author;
+  final String parent;
   const AnnouncementPage(
       {super.key,
+      required this.parent,
       required this.renderMode,
       required this.title,
       required this.bodyText,
@@ -22,9 +24,40 @@ class AnnouncementPage extends StatefulWidget {
 String selectedCat = "";
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
+  var originalString = "";
+
   void choiceDropdownCallback(String? selectedValue) {
     if (selectedValue != null) {
       selectedCat = selectedValue;
+    }
+  }
+
+  final FolderStorage folderStorage = FolderStorage();
+  List<String> _folders = [];
+  Map<String, int> _folderItemCounts = {};
+
+  Future<void> _loadFolders() async {
+    await folderStorage.init(); // Initialize shared preferences
+    List<String> folders = folderStorage.getAllFolders();
+    Map<String, int> folderItemCounts = {};
+
+    for (String folderName in folders) {
+      List<MapEntry<String, String>> items =
+          folderStorage.getStringsFromFolder(folderName);
+      folderItemCounts[folderName] =
+          items.length; // Store the number of items in each folder
+    }
+
+    setState(() {
+      _folders = folders;
+      _folderItemCounts = folderItemCounts;
+    });
+  }
+
+  Future<void> _addKeyValue(String key, String value, String folderName) async {
+    if (key.isNotEmpty && value.isNotEmpty) {
+      await folderStorage.addStringToFolder(folderName, key, value);
+      _loadFolders();
     }
   }
 
@@ -36,25 +69,11 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _loadFolders();
   }
-
-  // Future<void> pickDate() async {
-  //   final newDueDate = await DatePicker.showDateTimePicker(
-  //     context,
-  //     showTitleActions: true,
-  //     onChanged: (date) => date,
-  //     onConfirm: (date) {},
-  //   );
-  //   if (newDueDate != null) {
-  //     setState(() {
-  //       dueDate = newDueDate;
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
-    final titleController = TextEditingController(text: widget.title);
     Color backgroundColor = Colors.white;
 
     bool isDarkMode =
@@ -65,8 +84,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       backgroundColor = Colors.black;
     }
 
-    DateTime? dueDate;
-    final originalString = widget.bodyText;
+    originalString = widget.bodyText;
 
     final parsedString = originalString.replaceAllMapped(
         RegExp(
@@ -83,97 +101,92 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       ..loadHtmlString(originalString)
       ..enableZoom(true);
 
+    _loadFolders();
+
     return Scaffold(
       appBar: AppBar(
         actions: [
-          // IconButton(
-          //   onPressed: () {
-          //     showDialog(
-          //       context: context,
-          //       builder: (BuildContext context) {
-          //         return AlertDialog(
-          //           title: const Text("Set reminder"),
-          //           content: Column(
-          //             mainAxisSize: MainAxisSize.min,
-          //             crossAxisAlignment: CrossAxisAlignment.start,
-          //             children: [
-          //               TextField(
-          //                 controller: titleController,
-          //                 decoration: const InputDecoration(
-          //                   hintText: "Notification title",
-          //                 ),
-          //               ),
-          //               TextField(
-          //                 controller: bodyController,
-          //                 decoration: const InputDecoration(
-          //                     hintText: "Notification description"),
-          //               ),
-          //               const SizedBox(
-          //                 height: 10,
-          //               ),
-          //               dueDate == null
-          //                   ? IconButton(
-          //                       onPressed: () {},
-          //                       iconSize: 26,
-          //                       icon:
-          //                           const Icon(Icons.event_available_outlined),
-          //                     )
-          //                   : ActionChip(
-          //                       label: Text(formattedDate),
-          //                       onPressed: () {},
-          //                       backgroundColor: theme.brightness ==
-          //                               Brightness.dark
-          //                           ? Colors.grey[800]
-          //                           : const Color.fromRGBO(246, 242, 249, 1),
-          //                       elevation: 0,
-          //                     )
-          //             ],
-          //           ),
-          //           actions: [
-          //             Center(
-          //               child: Row(children: [
-          //                 TextButton(
-          //                   onPressed: () {
-          //                     final navigator = Navigator.of(context);
-          //                     navigator.pop();
-          //                   },
-          //                   child: const Text("Cancel"),
-          //                 ),
-          //                 const Spacer(),
-          //                 ElevatedButton(
-          //                   onPressed: () {
-          //                     final navigator = Navigator.of(context);
-          //                     navigator.pop();
-          //                     if (titleController.text == "" ||
-          //                         dueDate == null) {
-          //                       return;
-          //                     } else {
-          //                       service.scheduleNotification(
-          //                           title: titleController.text,
-          //                           body: bodyController.text,
-          //                           scheduledNotificationDateTime: dueDate);
-          //                     }
-          //                   },
-          //                   style: filledButtonStyle,
-          //                   child: const Text("Confirm"),
-          //                 ),
-          //               ]),
-          //             )
-          //           ],
-          //           alignment: Alignment.center,
-          //         );
-          //       },
-          //     );
-          //   },
-          //   icon: const Icon(Icons.calendar_month),
-          // ),
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Add post to folder",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _folders.length,
+                              itemBuilder: (context, index) {
+                                String folderName = _folders[index];
+                                int itemCount = _folderItemCounts[folderName] ??
+                                    0; // Get the number of items in the folder
+                                return ListTile(
+                                  title: Text(
+                                    folderName,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                      '$itemCount item(s)'), // Show the item count as subtitle
+                                  onTap: () {
+                                    _addKeyValue(widget.title, widget.bodyText,
+                                        folderName);
+                                    setState(() {});
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              "Post added to folder $folderName"),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("OK"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                isScrollControlled: true,
+              );
+            },
+            icon: Icon(Icons.folder_copy),
+            iconSize: 30,
+          ),
+          SizedBox(
+            width: 15,
+          )
         ],
-        // title: Row(
-        //   mainAxisAlignment: MainAxisAlignment.start,
-        //   children: [
-        //     Text("Announcement"),
-        //   ],
-        // ),
       ),
       body: SafeArea(
         child: Padding(
@@ -193,7 +206,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                   height: 5,
                 ),
                 Text(
-                  widget.author,
+                  widget.parent == "folderview"
+                      ? originalString.split("|").last
+                      : widget.author,
                   style: TextStyle(fontSize: 15),
                 ),
                 const SizedBox(

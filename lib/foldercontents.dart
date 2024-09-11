@@ -84,14 +84,6 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
     final response = await http.get(Uri.parse(url));
     final feed = xml.XmlDocument.parse(response.body);
     final posts = feed.findAllElements('entry').toList();
-    final categories = posts
-        .map((post) => post
-            .findElements('category')
-            .map((category) => category.getAttribute('term'))
-            .toList())
-        .expand((categoryList) => categoryList)
-        .toSet()
-        .toList();
     setState(() {
       _posts = posts;
       _isLoading = !_isLoading;
@@ -194,12 +186,11 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                       Container(
                         height: MediaQuery.of(context).size.height * 0.75,
                         child: RefreshIndicator(
+                            onRefresh: _refresh,
                             child: ListView.separated(
                               controller: _scrollController,
                               separatorBuilder: (separatorContext, index) =>
-                                  SizedBox(
-                                height: 5,
-                              ),
+                                  SizedBox(height: 5),
                               itemCount: filteredPosts.length,
                               itemBuilder: (context, index) {
                                 final post = filteredPosts[index];
@@ -224,8 +215,11 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: ListTile(
                                       onTap: () {
-                                        _addKeyValue(title, content);
+                                        _addKeyValue(title, "$content|$author");
                                         Navigator.of(context).pop();
+                                        print(
+                                          "$content|$author".split("|").last,
+                                        );
                                       },
                                       title: Column(
                                         crossAxisAlignment:
@@ -256,8 +250,7 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                                   ),
                                 );
                               },
-                            ),
-                            onRefresh: _refresh),
+                            )),
                       ),
                     ],
                   );
@@ -319,7 +312,9 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                           onTap: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(builder: (context) {
+                                print(entry.value.split("|").last);
                                 return AnnouncementPage(
+                                    parent: "folderview",
                                     renderMode: "Parsed HTML",
                                     title: entry.key,
                                     bodyText: entry.value,
