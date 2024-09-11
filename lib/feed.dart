@@ -289,6 +289,20 @@ class _BlogPageState extends State<BlogPage> {
                                 .findElements("name")
                                 .first
                                 .text;
+                            final publishedDate = post
+                                .findElements("published")
+                                .first
+                                .text
+                                .split("T")
+                                .first;
+                            final postcategory =
+                                post.findAllElements("category").isNotEmpty
+                                    ? post.findAllElements("category").first
+                                    : null;
+                            final categoryelement = postcategory == null
+                                ? ""
+                                : postcategory.getAttribute("term");
+
                             return Card(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -296,7 +310,7 @@ class _BlogPageState extends State<BlogPage> {
                                     color: Theme.of(context).primaryColorLight),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(6.0),
                                 child: ListTile(
                                   onTap: () {
                                     var navigator = Navigator.of(context);
@@ -326,7 +340,7 @@ class _BlogPageState extends State<BlogPage> {
                                       ),
                                       SizedBox(
                                         height: 5,
-                                      )
+                                      ),
                                     ],
                                   ),
                                   subtitle: Column(
@@ -335,6 +349,29 @@ class _BlogPageState extends State<BlogPage> {
                                         parseFragment(content).text!,
                                         maxLines: 3,
                                         style: const TextStyle(fontSize: 14),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.schedule,
+                                            size: 15,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            publishedDate,
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                          Spacer(),
+                                          postcategory != null
+                                              ? Text(
+                                                  "Category: ${categoryelement.toString().capitalize()}")
+                                              : SizedBox(),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -413,5 +450,15 @@ class _BlogPageState extends State<BlogPage> {
         ],
       ),
     );
+  }
+}
+
+extension StringExtensions on String {
+  String capitalize() {
+    if (this.isNotEmpty) {
+      return "${this[0].toUpperCase()}${this.substring(1)}";
+    } else {
+      return "";
+    }
   }
 }
