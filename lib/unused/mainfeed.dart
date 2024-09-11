@@ -157,17 +157,17 @@ class _FeedPageState extends State<FeedPage> {
                       child: ListTile(
                         onTap: () {
                           final navigator = Navigator.of(context);
-                          navigator.push(
-                            CupertinoPageRoute(
-                              builder: (context) {
-                                return AnnouncementPage(
-                                  author: pinnedAuthors![index],
-                                  title: pinnedTitles![index],
-                                  bodyText: pinnedContent![index],
-                                );
-                              },
-                            ),
-                          );
+                          // navigator.push(
+                          //   CupertinoPageRoute(
+                          //     builder: (context) {
+                          //       return AnnouncementPage(
+                          //         author: pinnedAuthors![index],
+                          //         title: pinnedTitles![index],
+                          //         bodyText: pinnedContent![index],
+                          //       );
+                          //     },
+                          //   ),
+                          // );
                         },
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,17 +267,17 @@ class _FeedPageState extends State<FeedPage> {
                     child: ListTile(
                       onTap: () {
                         var navigator = Navigator.of(context);
-                        navigator.push(
-                          CupertinoPageRoute(
-                            builder: (context) {
-                              return AnnouncementPage(
-                                author: author,
-                                title: title,
-                                bodyText: content,
-                              );
-                            },
-                          ),
-                        );
+                        // navigator.push(
+                        //   CupertinoPageRoute(
+                        //     builder: (context) {
+                        //       return AnnouncementPage(
+                        //         author: author,
+                        //         title: title,
+                        //         bodyText: content,
+                        //       );
+                        //     },
+                        //   ),
+                        // );
                       },
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

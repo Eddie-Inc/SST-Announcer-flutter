@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sst_announcer/homepage.dart';
 import 'package:sst_announcer/services/poststream.dart';
-import 'services/notificationservice.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
 
 final postStreamController = StreamController<PostStream>.broadcast();
-final NotificationService service = NotificationService();
 const feedUrl = 'http://studentsblog.sst.edu.sg/feeds/posts/default?';
 
 Future<void> checkForNewPosts() async {
@@ -29,8 +27,6 @@ Future<void> checkForNewPosts() async {
 
     // Update the last check time
     await prefs.setString('lastCheckTime', latestPosts.first['pubDate']!);
-    service.showNotification(
-        "New announcement", "There is a new post in SST Announcer");
   } else {
     return;
   }

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sst_announcer/main.dart';
-import 'package:sst_announcer/services/notificationservice.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intl/intl.dart';
+import 'package:webfeed/domain/media/media.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AnnouncementPage extends StatefulWidget {
+  final String renderMode;
   final String title;
   final String bodyText;
   final String author;
   const AnnouncementPage(
       {super.key,
+      required this.renderMode,
       required this.title,
       required this.bodyText,
       required this.author});
@@ -23,7 +22,6 @@ class AnnouncementPage extends StatefulWidget {
 String selectedCat = "";
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
-  final NotificationService service = NotificationService();
   void choiceDropdownCallback(String? selectedValue) {
     if (selectedValue != null) {
       selectedCat = selectedValue;
@@ -33,14 +31,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   final bodyController = TextEditingController();
   bool categoried = false;
   DateTime? dueDate;
-
-  String? renderMode;
-
-  void getPreferences() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    renderMode = prefs.getString("renderMode") ?? "Parsed HTML";
-    print(renderMode);
-  }
 
   @override
   void initState() {
@@ -64,8 +54,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   @override
   Widget build(BuildContext context) {
-    getPreferences();
-
     final titleController = TextEditingController(text: widget.title);
     Color backgroundColor = Colors.white;
 
@@ -219,28 +207,19 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: renderMode == "Parsed HTML"
+                    child: widget.renderMode == "Parsed HTML"
                         ? Html(
                             data: parsedString,
                             style: {
                               "body": Style(
-                                  fontFamily: DefaultTextStyle.of(context)
-                                      .style
-                                      .fontFamily,
                                   fontSize: FontSize.large,
                                   color: backgroundColor,
                                   textDecorationColor: backgroundColor),
                               "content": Style(
-                                  fontFamily: DefaultTextStyle.of(context)
-                                      .style
-                                      .fontFamily,
                                   fontSize: FontSize.large,
                                   color: backgroundColor,
                                   textDecorationColor: backgroundColor),
                               "div": Style(
-                                  fontFamily: DefaultTextStyle.of(context)
-                                      .style
-                                      .fontFamily,
                                   fontSize: FontSize.large,
                                   color: backgroundColor,
                                   textDecorationColor: backgroundColor),
@@ -249,17 +228,11 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                             color: backgroundColor,
                             textDecorationColor: backgroundColor),*/
                               "p": Style(
-                                  fontFamily: DefaultTextStyle.of(context)
-                                      .style
-                                      .fontFamily,
                                   fontSize: FontSize.large,
                                   color: backgroundColor,
                                   textDecorationColor: backgroundColor),
                               "a": Style(
                                   textDecoration: TextDecoration.none,
-                                  fontFamily: DefaultTextStyle.of(context)
-                                      .style
-                                      .fontFamily,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
                             },
@@ -267,7 +240,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               launch(link!);
                             },
                           )
-                        : (renderMode == "Web View"
+                        : (widget.renderMode == "Web View"
                             ? SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.6,

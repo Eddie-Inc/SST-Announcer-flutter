@@ -37,7 +37,6 @@ dependencies:
   provider: ^6.0.5
   flutter_cache_manager: ^3.3.0
   flutter_html: ^3.0.0-beta.2
-  flutter_local_notifications: ^9.8.0
   webfeed: ^0.7.0
   flutter_animate: ^4.1.1+1
   skeletonizer: ^1.4.2

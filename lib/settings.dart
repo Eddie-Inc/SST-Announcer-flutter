@@ -43,7 +43,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    getCache();
     getSettings();
   }
 
@@ -56,17 +55,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("renderMode", selectedRenderMode ?? "Parsed HTML");
     print(prefs.getString("renderMode"));
-  }
-
-  void getCache() async {
-    file = await DefaultCacheManager().getSingleFile(
-        'http://studentsblog.sst.edu.sg/feeds/posts/default?max-results=100');
-    final document = xml.XmlDocument.parse(await file!.readAsString());
-    setState(() {
-      posts = document.findAllElements('entry').toList();
-      cacheSize = _getSize(file!);
-      print(cacheSize);
-    });
   }
 
   @override
@@ -87,19 +75,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: EdgeInsets.all(15),
             child: ListView(
               children: [
-                Text(
-                  "Cache size: $cacheSize bytes",
-                  style: const TextStyle(fontSize: 18),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Divider(
-                  height: 1,
-                ),
-                SizedBox(
-                  height: 15,
-                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

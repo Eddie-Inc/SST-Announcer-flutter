@@ -45,7 +45,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    service.init();
     super.initState();
     getCategoryList().then((categoryList) {
       setState(() {
@@ -241,10 +240,7 @@ class _HomePageState extends State<HomePage> {
       //   ),
       // ),
       body: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-          child: BlogPage(),
-        ),
+        BlogPage(),
         const FolderPage(),
         const SettingsScreen(),
       ][currentPageIndex],

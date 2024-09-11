@@ -146,17 +146,17 @@ class _CategoryPageState extends State<CategoryPage> {
                           return ListTile(
                             onTap: () {
                               var navigator = Navigator.of(context);
-                              navigator.push(
-                                CupertinoPageRoute(
-                                  builder: (context) {
-                                    return AnnouncementPage(
-                                      author: author,
-                                      title: title,
-                                      bodyText: content,
-                                    );
-                                  },
-                                ),
-                              );
+                              // navigator.push(
+                              //   CupertinoPageRoute(
+                              //     builder: (context) {
+                              //       return AnnouncementPage(
+                              //         author: author,
+                              //         title: title,
+                              //         bodyText: content,
+                              //       );
+                              //     },
+                              //   ),
+                              // );
                             },
                             title: Text(title),
                             subtitle: Text(
@@ -195,17 +195,17 @@ class _CategoryPageState extends State<CategoryPage> {
                                 return ListTile(
                                   onTap: () {
                                     var navigator = Navigator.of(context);
-                                    navigator.push(
-                                      CupertinoPageRoute(
-                                        builder: (context) {
-                                          return AnnouncementPage(
-                                            author: "",
-                                            title: item.title!,
-                                            bodyText: item.content!,
-                                          );
-                                        },
-                                      ),
-                                    );
+                                    // navigator.push(
+                                    //   CupertinoPageRoute(
+                                    //     builder: (context) {
+                                    //       return AnnouncementPage(
+                                    //         author: "",
+                                    //         title: item.title!,
+                                    //         bodyText: item.content!,
+                                    //       );
+                                    //     },
+                                    //   ),
+                                    // );
                                   },
                                   title: Text(item.title ?? ''),
                                   subtitle: Text(
