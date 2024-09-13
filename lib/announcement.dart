@@ -94,9 +94,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       return '"${match.group(0)}"';
     });
 
-    // final formattedDate =
-    //     dueDate == null ? "" : DateFormat("dd/MM/yyyy").format(dueDate);
-
     WebViewController htmlViewController = WebViewController()
       ..loadHtmlString(originalString)
       ..enableZoom(true);
@@ -238,10 +235,10 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                   fontSize: FontSize.large,
                                   color: backgroundColor,
                                   textDecorationColor: backgroundColor),
-                              /*"span": Style(
-                            fontSize: FontSize.large,
-                            color: backgroundColor,
-                            textDecorationColor: backgroundColor),*/
+                              "span": Style(
+                                  fontSize: FontSize.large,
+                                  color: backgroundColor,
+                                  textDecorationColor: backgroundColor),
                               "p": Style(
                                   fontSize: FontSize.large,
                                   color: backgroundColor,
@@ -252,7 +249,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                   fontWeight: FontWeight.bold),
                             },
                             onLinkTap: (link, _, ___) {
-                              launch(link!);
+                              launchUrl(Uri.parse(link!));
                             },
                           )
                         : (widget.renderMode == "Web View"

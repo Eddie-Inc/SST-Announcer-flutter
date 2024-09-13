@@ -37,10 +37,10 @@ dependencies:
   provider: ^6.0.5
   flutter_cache_manager: ^3.3.0
   flutter_html: ^3.0.0-beta.2
-  webfeed: ^0.7.0
-  flutter_animate: ^4.1.1+1
   skeletonizer: ^1.4.2
   webview_flutter: ^4.9.0
+  xml: ^6.5.0
+  onesignal_flutter: ^5.2.5
 
 dev_dependencies:
   flutter_test:

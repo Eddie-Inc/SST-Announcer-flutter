@@ -116,8 +116,6 @@ class _FolderPageState extends State<FolderPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  print(
-                      "creating folder with name ${_folderNameController.text}");
                   _createFolder();
                   Navigator.pop(context);
                   setState(() {
@@ -142,7 +140,10 @@ class _FolderPageState extends State<FolderPage> {
               Expanded(
                 child: _folders.isEmpty
                     ? Center(child: Text('No folders found'))
-                    : ListView.builder(
+                    : ListView.separated(
+                        separatorBuilder: (context, index) => Divider(
+                          height: 1,
+                        ),
                         itemCount: _folders.length,
                         itemBuilder: (context, index) {
                           String folderName = _folders[index];

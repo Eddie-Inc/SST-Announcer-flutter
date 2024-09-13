@@ -1,35 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart' as xml;
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-Future<int> getCacheSize() async {
-  Directory tempDir = await getTemporaryDirectory();
-  int tempDirSize = _getSize(tempDir);
-  return tempDirSize;
-}
-
-int _getSize(FileSystemEntity file) {
-  if (file is File) {
-    return file.lengthSync();
-  } else if (file is Directory) {
-    int sum = 0;
-    List<FileSystemEntity> children = file.listSync();
-    for (FileSystemEntity child in children) {
-      sum += _getSize(child);
-    }
-    return sum;
-  }
-  return 0;
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -54,7 +32,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void saveSettings() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("renderMode", selectedRenderMode ?? "Parsed HTML");
-    print(prefs.getString("renderMode"));
   }
 
   @override
@@ -70,42 +47,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       body: SafeArea(
-        child: Expanded(
-          child: Padding(
-            padding: EdgeInsets.all(15),
-            child: ListView(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Render mode",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    Spacer(),
-                    DropdownMenu(
-                      dropdownMenuEntries: RenderingModes.map(
-                        (mode) => DropdownMenuEntry(value: mode, label: mode!),
-                      ).toList(),
-                      inputDecorationTheme: InputDecorationTheme(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      initialSelection: selectedRenderMode,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedRenderMode = value!;
-                          saveSettings();
-                        });
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Render mode",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              Spacer(),
+              DropdownMenu(
+                dropdownMenuEntries: RenderingModes.map(
+                  (mode) => DropdownMenuEntry(value: mode, label: mode!),
+                ).toList(),
+                inputDecorationTheme: InputDecorationTheme(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                initialSelection: selectedRenderMode,
+                onSelected: (value) {
+                  setState(() {
+                    selectedRenderMode = value!;
+                    saveSettings();
+                  });
+                },
+              ),
+            ],
           ),
         ),
       ),

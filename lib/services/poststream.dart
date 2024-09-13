@@ -1,1 +1,0 @@
-enum PostStream { refreshPosts }

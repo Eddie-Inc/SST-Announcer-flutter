@@ -10,7 +10,7 @@ import 'package:xml/xml.dart' as xml;
 class FolderContentsScreen extends StatefulWidget {
   final String folderName;
 
-  FolderContentsScreen({required this.folderName});
+  const FolderContentsScreen({super.key, required this.folderName});
 
   @override
   _FolderContentsScreenState createState() => _FolderContentsScreenState();
@@ -217,9 +217,6 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                                       onTap: () {
                                         _addKeyValue(title, "$content|$author");
                                         Navigator.of(context).pop();
-                                        print(
-                                          "$content|$author".split("|").last,
-                                        );
                                       },
                                       title: Column(
                                         crossAxisAlignment:
@@ -312,7 +309,6 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                           onTap: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(builder: (context) {
-                                print(entry.value.split("|").last);
                                 return AnnouncementPage(
                                     parent: "folderview",
                                     renderMode: "Parsed HTML",

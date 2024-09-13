@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sst_announcer/announcement.dart';
 import 'package:xml/xml.dart' as xml;
-import 'package:intl/intl.dart';
 
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
@@ -162,19 +161,6 @@ class _BlogPageState extends State<BlogPage> {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.elliptical(
-                      MediaQuery.of(context).size.width * 0.05, 22.5),
-                  bottomRight: Radius.elliptical(
-                      MediaQuery.of(context).size.width * 0.05, 22.5),
-                ),
-                border: searchTileOpen
-                    ? Border(
-                        bottom: BorderSide(width: 0.8, color: Colors.white),
-                      )
-                    : Border(),
-              ),
               child: ExpansionTile(
                 collapsedShape: RoundedRectangleBorder(
                   side: BorderSide.none,
@@ -227,7 +213,7 @@ class _BlogPageState extends State<BlogPage> {
                                 .map(
                                   (category) => DropdownMenuEntry(
                                     value: category!,
-                                    label: toBeginningOfSentenceCase(category)!,
+                                    label: category.capitalize(),
                                   ),
                                 )
                                 .toList(),
