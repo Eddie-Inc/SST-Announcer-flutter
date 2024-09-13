@@ -16,17 +16,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   File? file;
 
   List<String?> RenderingModes = ["Parsed HTML", "Web View", "Raw Text"];
-  String? selectedRenderMode = "Parsed HTML";
+  String? selectedRenderMode;
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     getSettings();
+    WidgetsBinding.instance.addPostFrameCallback((_) => getSettings);
   }
 
   void getSettings() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    selectedRenderMode = prefs.getString("renderMode") ?? "Parsed HTML";
+    print("sharedpreferences initialized");
+    setState(() {
+      selectedRenderMode = prefs.getString("renderMode") ?? "Parsed HTML";
+    });
+    print(selectedRenderMode);
   }
 
   void saveSettings() async {
@@ -73,6 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   setState(() {
                     selectedRenderMode = value!;
                     saveSettings();
+                    getSettings();
                   });
                 },
               ),

@@ -34,13 +34,12 @@ dependencies:
   html: ^0.15.1
   http: ^0.13.5
   shared_preferences: ^2.0.18
-  provider: ^6.0.5
-  flutter_cache_manager: ^3.3.0
   flutter_html: ^3.0.0-beta.2
   skeletonizer: ^1.4.2
   webview_flutter: ^4.9.0
   xml: ^6.5.0
   onesignal_flutter: ^5.2.5
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
