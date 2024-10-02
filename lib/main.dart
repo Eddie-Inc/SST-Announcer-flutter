@@ -107,17 +107,5 @@ class _MyAppState extends State<MyApp> {
         });
       }),
     );
-
-    DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
-      return MaterialApp(
-        title: 'SST Announcer',
-        theme:
-            materialYou ? ThemeData(colorScheme: lightColorScheme) : lightTheme,
-        darkTheme:
-            materialYou ? ThemeData(colorScheme: darkColorScheme) : darkTheme,
-        home: HomePage(),
-        debugShowCheckedModeBanner: false,
-      );
-    });
   }
 }
