@@ -130,6 +130,10 @@ meta
 2.12
 file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/meta-1.15.0/
 file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/meta-1.15.0/lib/
+nested
+2.12
+file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/nested-1.0.0/
+file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/nested-1.0.0/lib/
 onesignal_flutter
 2.12
 file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/onesignal_flutter-5.2.5/
@@ -162,6 +166,10 @@ plugin_platform_interface
 3.0
 file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8/
 file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib/
+provider
+2.12
+file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/provider-6.1.2/
+file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/provider-6.1.2/lib/
 rename
 2.12
 file:///Users/lukeyeo/.pub-cache/hosted/pub.dev/rename-3.0.2/
