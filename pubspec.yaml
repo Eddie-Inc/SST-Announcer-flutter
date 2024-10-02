@@ -42,6 +42,8 @@ dependencies:
   onesignal_flutter: ^5.2.5
   flutter_launcher_icons: ^0.13.1
   rename: ^3.0.2
+  flutter_colorpicker: ^1.1.0
+  dynamic_color: ^1.7.0
 
 dev_dependencies:
   flutter_test:

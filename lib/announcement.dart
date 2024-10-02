@@ -25,6 +25,7 @@ String selectedCat = "";
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
   var originalString = "";
+  final TextEditingController _folderNameController = TextEditingController();
 
   void choiceDropdownCallback(String? selectedValue) {
     if (selectedValue != null) {
@@ -58,6 +59,16 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     if (key.isNotEmpty && value.isNotEmpty) {
       await folderStorage.addStringToFolder(folderName, key, value);
       _loadFolders();
+    }
+  }
+
+  // Create a new folder
+  Future<void> _createFolder() async {
+    String folderName = _folderNameController.text.trim();
+    if (folderName.isNotEmpty) {
+      await folderStorage.createFolder(folderName);
+      _folderNameController.clear();
+      _loadFolders(); // Reload the folders after creating a new one
     }
   }
 
@@ -114,6 +125,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                     child: Padding(
                       padding: EdgeInsets.all(10),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             "Add post to folder",
@@ -125,50 +137,128 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           SizedBox(
                             height: 10,
                           ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: _folders.length,
-                              itemBuilder: (context, index) {
-                                String folderName = _folders[index];
-                                int itemCount = _folderItemCounts[folderName] ??
-                                    0; // Get the number of items in the folder
-                                return ListTile(
-                                  title: Text(
-                                    folderName,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                          _folders.length > 0
+                              ? Expanded(
+                                  child: ListView.builder(
+                                    itemCount: _folders.length,
+                                    itemBuilder: (context, index) {
+                                      String folderName = _folders[index];
+                                      int itemCount = _folderItemCounts[
+                                              folderName] ??
+                                          0; // Get the number of items in the folder
+                                      return ListTile(
+                                        title: Text(
+                                          folderName,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                            '$itemCount item(s)'), // Show the item count as subtitle
+                                        onTap: () {
+                                          _addKeyValue(
+                                              widget.title,
+                                              "${widget.bodyText}|${widget.author}",
+                                              folderName);
+                                          setState(() {});
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                    "Post added to folder $folderName"),
+                                                actions: [
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("OK"),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
                                   ),
-                                  subtitle: Text(
-                                      '$itemCount item(s)'), // Show the item count as subtitle
-                                  onTap: () {
-                                    _addKeyValue(widget.title, widget.bodyText,
-                                        folderName);
-                                    setState(() {});
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(
-                                              "Post added to folder $folderName"),
-                                          actions: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("OK"),
+                                )
+                              : Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "No folders created",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text(
+                                              "New folder",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ),
+                                            content: TextField(
+                                              controller: _folderNameController,
+                                              decoration: InputDecoration(
+                                                labelText: "Enter folder name",
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0),
+                                                ),
+                                              ),
+                                            ),
+                                            actions: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    _folderNameController.text =
+                                                        "";
+                                                  });
+                                                },
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  _createFolder();
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    _folderNameController.text =
+                                                        "";
+                                                  });
+                                                },
+                                                child: const Text(
+                                                  'Create',
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Text(
+                                          "Create folder",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
                     ),

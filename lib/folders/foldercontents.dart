@@ -281,7 +281,112 @@ class _FolderContentsScreenState extends State<FolderContentsScreen> {
                           height: 10,
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Text(
+                                        "Add posts",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.75,
+                                      child: RefreshIndicator(
+                                          onRefresh: _refresh,
+                                          child: ListView.separated(
+                                            controller: _scrollController,
+                                            separatorBuilder:
+                                                (separatorContext, index) =>
+                                                    SizedBox(height: 5),
+                                            itemCount: filteredPosts.length,
+                                            itemBuilder: (context, index) {
+                                              final post = filteredPosts[index];
+                                              final title = post
+                                                  .findElements('title')
+                                                  .first
+                                                  .text;
+                                              final content = post
+                                                  .findElements('content')
+                                                  .first
+                                                  .text;
+                                              final author = post
+                                                  .findElements("author")
+                                                  .first
+                                                  .findElements("name")
+                                                  .first
+                                                  .text;
+                                              return Card(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  side: BorderSide(
+                                                      color: Theme.of(context)
+                                                          .primaryColorLight),
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: ListTile(
+                                                    onTap: () {
+                                                      _addKeyValue(title,
+                                                          "$content|$author");
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    title: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          title,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 20),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        )
+                                                      ],
+                                                    ),
+                                                    subtitle: Column(
+                                                      children: [
+                                                        Text(
+                                                          parseFragment(content)
+                                                              .text!,
+                                                          maxLines: 3,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 14),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          )),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
                           child: Text(
                             "Add posts",
                             style: TextStyle(fontSize: 18),

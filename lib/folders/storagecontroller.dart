@@ -64,6 +64,7 @@ class FolderStorage {
   // Create a new folder by adding an initial key-value pair
   Future<void> createFolder(String folderName) async {
     // Add an empty item to signify folder creation
-    await addStringToFolder(folderName, 'initial', 'empty');
+    await addStringToFolder(
+        folderName, 'Add your own posts', '''Delete this once you're done''');
   }
 }
