@@ -339,7 +339,8 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                   fontWeight: FontWeight.bold),
                             },
                             onLinkTap: (link, _, ___) {
-                              launchUrl(Uri.parse(link!));
+                              launchUrl(Uri.parse(link!),
+                                  mode: LaunchMode.externalApplication);
                             },
                           )
                         : (widget.renderMode == "Web View"
