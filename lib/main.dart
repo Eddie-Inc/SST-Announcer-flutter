@@ -19,9 +19,14 @@ void main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
-  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize("856bbc0e-4c79-4d7e-bc8f-1b63ad85ee66");
+  OneSignal.initialize("eed6fbe1-6be5-431e-8b67-0b4478d68586");
+  print("initialized with id: eed6fbe1-6be5-431e-8b67-0b4478d68586");
   OneSignal.Notifications.requestPermission(true);
+  OneSignal.Notifications.addClickListener((event) {
+    print("notification clicked with event: $event");
+    print(
+        "notification: ${event.notification.title}, ${event.notification.body}");
+  });
 }
 
 class MyApp extends StatefulWidget {

@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:sst_announcer/folders/storagecontroller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -97,7 +99,10 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
     originalString = widget.bodyText;
 
-    final parsedString = originalString.replaceAllMapped(
+    var cleanedHtml = originalString.replaceAll(
+        RegExp(r'\s*height="[^"]*"', caseSensitive: false), "");
+
+    final parsedString = cleanedHtml.replaceAllMapped(
         RegExp(
             r'((?:font-size|color|background-color):\s*(?:rgba\([^)]*\)|[^;]*);?)',
             multiLine: true,
@@ -337,11 +342,35 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                   textDecoration: TextDecoration.none,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
+                              "img": Style(
+                                width: Width(
+                                  MediaQuery.of(context).size.width - 20,
+                                ),
+                              ),
                             },
                             onLinkTap: (link, _, ___) {
                               launchUrl(Uri.parse(link!),
                                   mode: LaunchMode.externalApplication);
                             },
+                            // extensions: [
+                            //   OnImageTapExtension(
+                            //       onImageTap: (src, imgAttributes, element) {
+                            //     Navigator.of(context).push(
+                            //       CupertinoPageRoute(builder: (context) {
+                            //         return Scaffold(
+                            //           body: SafeArea(
+                            //             child: Center(
+                            //               child: PhotoView(
+                            //                 imageProvider:
+                            //                     Image.network(src!).image,
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         );
+                            //       }),
+                            //     );
+                            //   })
+                            // ],
                           )
                         : (widget.renderMode == "Web View"
                             ? SizedBox(
