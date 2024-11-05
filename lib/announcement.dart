@@ -348,29 +348,63 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                 ),
                               ),
                             },
-                            onLinkTap: (link, _, ___) {
-                              launchUrl(Uri.parse(link!),
-                                  mode: LaunchMode.externalApplication);
-                            },
-                            // extensions: [
-                            //   OnImageTapExtension(
-                            //       onImageTap: (src, imgAttributes, element) {
-                            //     Navigator.of(context).push(
-                            //       CupertinoPageRoute(builder: (context) {
-                            //         return Scaffold(
-                            //           body: SafeArea(
-                            //             child: Center(
-                            //               child: PhotoView(
-                            //                 imageProvider:
-                            //                     Image.network(src!).image,
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         );
-                            //       }),
-                            //     );
-                            //   })
-                            // ],
+                            // onLinkTap: (link, _, ___) {
+                            //   launchUrl(Uri.parse(link!),
+                            //       mode: LaunchMode.externalApplication);
+                            // },
+                            extensions: [
+                              TagExtension(
+                                tagsToExtend: {"img"},
+                                builder: (extensionContext) {
+                                  final imageUrl =
+                                      extensionContext.attributes['src'] ?? '';
+                                  if (imageUrl.isNotEmpty) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        print("image tapped");
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                              builder: (context) {
+                                            return Scaffold(
+                                              body: SafeArea(
+                                                child: Center(
+                                                  child: PhotoView(
+                                                    imageProvider:
+                                                        Image.network(imageUrl)
+                                                            .image,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                        );
+                                      },
+                                      child: Image.network(imageUrl,
+                                          fit: BoxFit.cover),
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                              ),
+                              // OnImageTapExtension(
+                              //     onImageTap: (src, imgAttributes, element) {
+                              //   Navigator.of(context).push(
+                              //     CupertinoPageRoute(builder: (context) {
+                              //       return Scaffold(
+                              //         body: SafeArea(
+                              //           child: Center(
+                              //             child: PhotoView(
+                              //               imageProvider:
+                              //                   Image.network(src!).image,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       );
+                              //     }),
+                              //   );
+                              // })
+                            ],
                           )
                         : (widget.renderMode == "Web View"
                             ? SizedBox(
